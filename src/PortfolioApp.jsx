@@ -3,8 +3,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Mail, Github, Linkedin, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
-import Fireworks from "./fireworks"; // Keep your existing fireworks
-import TypingAnimation from "./TypingAnimation"; // Make sure you have your typing animation component
+import Fireworks from "./fireworks";
+import TypingAnimation from "./TypingAnimation";
 
 const projects = [
   { id: 1, title: "AI DevOps Dashboard", desc: "Realtime insights, anomaly detection and auto-remediation pipelines.", tags: ["React", "Node", "Kubernetes"], link: "#" },
@@ -32,8 +32,9 @@ export default function PortfolioApp() {
   const submitContact = async (e) => {
     e.preventDefault();
     setStatus("sending");
+
     try {
-      await axios.post("/api/contact", form, { timeout: 10000 });
+      await axios.post("/api/contact", form);
       setStatus("sent");
       setForm({ name: "", email: "", message: "" });
     } catch (err) {
@@ -61,7 +62,6 @@ export default function PortfolioApp() {
       <main className="max-w-6xl mx-auto px-6 py-12">
         {/* Hero Section */}
         <section className="grid md:grid-cols-2 gap-8 items-center relative">
-          {/* Left Column */}
           <div>
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
@@ -71,7 +71,6 @@ export default function PortfolioApp() {
             >
               Building <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-200 to-purple-300">futuristic</span> web experiences —<br /> that recruiters remember.
             </motion.h1>
-
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -92,19 +91,15 @@ export default function PortfolioApp() {
             </div>
           </div>
 
-          {/* Right Column: Fireworks + Typing + Photo */}
           <div className="relative flex flex-col justify-center items-center md:items-end mt-6 md:mt-0">
-            {/* Fireworks in background */}
             <div className="absolute inset-0 h-[350px] w-full pointer-events-none z-0">
               <Fireworks />
             </div>
 
-            {/* Typing Animation */}
             <div className="relative z-10">
               <TypingAnimation />
             </div>
 
-            {/* Profile Photo */}
             <motion.img
               src="/me.jpg"
               alt="Ryan"
@@ -169,7 +164,13 @@ export default function PortfolioApp() {
               <input name="email" type="email" value={form.email} onChange={handleChange} required placeholder="Email" className="rounded-md p-3 bg-transparent border border-slate-700" />
               <textarea name="message" value={form.message} onChange={handleChange} required rows={5} placeholder="Message" className="rounded-md p-3 bg-transparent border border-slate-700" />
               <button type="submit" className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-purple-500 to-cyan-400 font-semibold">Send</button>
-              <div className="text-sm text-slate-400">{status === 'sending' ? 'Sending…' : status === 'sent' ? 'Message sent!' : status === 'error' ? 'Error — try again' : ''}</div>
+
+              {/* Success/Error Feedback */}
+              <div className="text-sm mt-1 text-slate-400">
+                {status === 'sending' && 'Sending…'}
+                {status === 'sent' && 'Message sent!'}
+                {status === 'error' && 'Error — try again'}
+              </div>
             </div>
           </form>
         </section>
