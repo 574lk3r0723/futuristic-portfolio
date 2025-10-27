@@ -1,4 +1,4 @@
-/* PortfolioApp.jsx - Main React App */
+/* PortfolioApp.jsx */
 import React from "react";
 import { motion } from "framer-motion";
 import { Mail, Github, Linkedin, Download, ChevronLeft, ChevronRight } from "lucide-react";
@@ -86,7 +86,7 @@ export default function PortfolioApp() {
       </div>
 
       {/* Header */}
-      <header className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
+      <header className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between relative z-20">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-cyan-400 rounded-2xl flex items-center justify-center text-black font-bold">TS</div>
           <div className="font-medium">Your Name</div>
@@ -99,7 +99,7 @@ export default function PortfolioApp() {
         </nav>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 pb-16">
+      <main className="max-w-6xl mx-auto px-6 pb-16 relative z-10">
         {/* Hero Section */}
         <section className="grid md:grid-cols-2 gap-8 items-center relative">
           {/* Left Column */}
@@ -154,13 +154,15 @@ export default function PortfolioApp() {
 
           {/* Right Column: Photo with fireworks */}
           <div className="relative flex flex-col justify-center items-center md:items-end mt-6 md:mt-0 w-full h-full">
-            {/* Fireworks canvas bigger than image */}
-            <div className="absolute -top-20 -right-20 w-[400px] h-[400px] md:w-[500px] md:h-[500px]">
-              <Fireworks intensity={0.8} particleCount={40} className="w-full h-full" />
+            {/* Fireworks canvas behind the image */}
+            <div className="absolute -top-28 -right-28 w-[500px] h-[500px] md:w-[600px] md:h-[600px] pointer-events-none">
+              <Fireworks intensity={0.8} particleCount={50} className="w-full h-full" />
             </div>
 
+            {/* Typing animation above image */}
             <TypingAnimation />
 
+            {/* Profile image in front */}
             <motion.img
               src="/me.jpg"
               alt="Ryan"
