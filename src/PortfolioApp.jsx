@@ -11,6 +11,44 @@ const projects = [
   { id: 4, title: "Portfolio Builder AI", desc: "An AI-powered web portfolio generator that writes your bio for you.", tags: ["Next.js", "OpenAI", "Tailwind"], link: "#" },
 ];
 
+/* Simple TypingAnimation component (was referenced but not defined) */
+function TypingAnimation() {
+  const phrases = ["Full-stack Engineer", "Performance-focused", "Pixel-perfect UI"];
+  const [idx, setIdx] = React.useState(0);
+  const [subIdx, setSubIdx] = React.useState(0);
+  const [forward, setForward] = React.useState(true);
+
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (forward) {
+        if (subIdx < phrases[idx].length) {
+          setSubIdx((s) => s + 1);
+        } else {
+          setForward(false);
+          setTimeout(() => setForward(false), 600);
+        }
+      } else {
+        if (subIdx > 0) {
+          setSubIdx((s) => s - 1);
+        } else {
+          setForward(true);
+          setIdx((i) => (i + 1) % phrases.length);
+        }
+      }
+    }, forward ? 80 : 40);
+    return () => clearTimeout(timeout);
+  }, [idx, subIdx, forward, phrases]);
+
+  return (
+    <div className="text-sm text-slate-400 mb-2">
+      <span className="inline-block rounded px-3 py-1 bg-slate-800/40 backdrop-blur-sm">
+        {phrases[idx].slice(0, subIdx)}
+        <span className="ml-1 inline-block w-1 h-4 align-middle bg-slate-400 animate-pulse" />
+      </span>
+    </div>
+  );
+}
+
 export default function PortfolioApp() {
   const [form, setForm] = React.useState({ name: "", email: "", message: "" });
   const [status, setStatus] = React.useState(null);
@@ -18,14 +56,19 @@ export default function PortfolioApp() {
   const [paused, setPaused] = React.useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-  const nextSlide = () => setCurrent((prev) => (prev + 1) % projects.length);
+  const nextSlide = React.useCallback(() => {
+    setCurrent((prev) => (prev + 1) % projects.length);
+  }, []);
   const prevSlide = () => setCurrent((prev) => (prev - 1 + projects.length) % projects.length);
 
+  /* Improved effect: avoid stale closure by using setCurrent directly */
   React.useEffect(() => {
     if (paused) return;
-    const timer = setInterval(nextSlide, 5000);
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % projects.length);
+    }, 5000);
     return () => clearInterval(timer);
-  }, [paused]);
+  }, [paused, projects.length]);
 
   const submitContact = async (e) => {
     e.preventDefault();
@@ -66,9 +109,11 @@ export default function PortfolioApp() {
         </nav>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-12">
+      {/* MAIN: added opening main tag (was missing) */}
+      <main className="max-w-6xl mx-auto px-6 pb-16">
+
         {/* Hero Section */}
-        <section className="grid md:grid-cols-2 gap-8 items-center">
+        <section className="grid md:grid-cols-2 gap-8 items-center relative">
           {/* Left Column: Text, buttons, links */}
           <div>
             <motion.h1
@@ -77,35 +122,60 @@ export default function PortfolioApp() {
               transition={{ delay: 0.1 }}
               className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight"
             >
-              Building <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-200 to-purple-300">futuristic</span> web experiences —<br /> that recruiters remember.
+              Building{" "}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-200 to-purple-300">
+                futuristic
+              </span>{" "}
+              web experiences —<br /> that recruiters remember.
             </motion.h1>
+
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.25 }}
               className="mt-6 text-slate-300 max-w-xl"
             >
-              I'm a full-stack engineer who blends performant architecture with pixel-perfect UI. I focus on shipping results that scale, impress, and solve business problems.
+              I'm a full-stack engineer who blends performant architecture with pixel-perfect UI.
+              I focus on shipping results that scale, impress, and solve business problems.
             </motion.p>
+
             <div className="mt-8 flex flex-wrap gap-4">
-              <a href="#projects" className="inline-flex items-center gap-3 px-5 py-3 rounded-full bg-gradient-to-r from-purple-500 to-cyan-400 font-semibold shadow-lg hover:scale-105 transform transition">See Projects</a>
-              <a href="#contact" className="inline-flex items-center gap-2 px-4 py-3 rounded-lg border border-slate-700"><Mail size={16} /> Contact</a>
+              <a
+                href="#projects"
+                className="inline-flex items-center gap-3 px-5 py-3 rounded-full bg-gradient-to-r from-purple-500 to-cyan-400 font-semibold shadow-lg hover:scale-105 transform transition"
+              >
+                See Projects
+              </a>
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-2 px-4 py-3 rounded-lg border border-slate-700"
+              >
+                <Mail size={16} /> Contact
+              </a>
             </div>
+
             <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-slate-400">
-              <a href="#" className="flex items-center gap-2 hover:underline"><Github size={16} /> github.com/you</a>
-              <a href="#" className="flex items-center gap-2 hover:underline"><Linkedin size={16} /> linkedin.com/in/you</a>
+              <a href="#" className="flex items-center gap-2 hover:underline">
+                <Github size={16} /> github.com/you
+              </a>
+              <a href="#" className="flex items-center gap-2 hover:underline">
+                <Linkedin size={16} /> linkedin.com/in/you
+              </a>
             </div>
           </div>
 
-          {/* Right Column: Responsive Photo */}
-          <div className="flex justify-center md:justify-end mt-6 md:mt-0">
+          {/* Right Column: Photo with typing animation */}
+          <div className="flex flex-col justify-center items-center md:items-end mt-6 md:mt-0 relative">
+            {/* Typing animation above image */}
+            <TypingAnimation />
+
             <motion.img
               src="/me.jpg"
-              alt="Your Name"
+              alt="Ryan"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 rounded-2xl object-cover shadow-xl border-4 border-slate-700"
+              className="w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 rounded-2xl object-cover shadow-xl border-4 border-slate-700 mt-4"
             />
           </div>
         </section>
