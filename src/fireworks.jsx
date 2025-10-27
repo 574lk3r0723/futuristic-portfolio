@@ -1,84 +1,93 @@
-import React, { useRef, useEffect } from "react";
+// Fireworks.jsx
+import React, { useEffect, useRef } from "react";
 
-export default function Fireworks({ intensity = 0.6, particleCount = 40, className = "" }) {
-  const canvasRef = useRef(null);
-  const rockets = useRef([]);
-  const particles = useRef([]);
+export default function Fireworks() {
+  const canvasRef = useRef();
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
-    const setSize = () => {
-      canvas.width = canvas.clientWidth;
-      canvas.height = canvas.clientHeight;
+    // Set canvas size to parent container
+    const setCanvasSize = () => {
+      canvas.width = canvas.parentElement.offsetWidth;
+      canvas.height = canvas.parentElement.offsetHeight;
     };
-    setSize();
-    window.addEventListener("resize", setSize);
+    setCanvasSize();
+    window.addEventListener("resize", setCanvasSize);
 
-    const random = (min, max) => Math.random() * (max - min) + min;
+    const fireworks = [];
+    const particles = [];
 
-    function Rocket() {
-      this.x = canvas.width / 2 + random(-50, 50); // wider spread
-      this.y = canvas.height;
-      this.vx = random(-1, 1);
-      this.vy = random(-8, -12);
-      this.exploded = false;
+    class Firework {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        // Spawn lower: from 25% to 75% of canvas height
+        this.y = canvas.height * 0.25 + Math.random() * canvas.height * 0.5;
+        this.exploded = false;
+        this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+      }
+      explode() {
+        this.exploded = true;
+        for (let i = 0; i < 30; i++) {
+          particles.push(new Particle(this.x, this.y, this.color));
+        }
+      }
     }
 
-    function Particle(x, y) {
-      this.x = x;
-      this.y = y;
-      this.vx = random(-3, 3);
-      this.vy = random(-3, 3);
-      this.alpha = 1;
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.radius = 2 + Math.random() * 2;
+        this.vx = (Math.random() - 0.5) * 6;
+        this.vy = (Math.random() - 0.5) * 6;
+        this.alpha = 1;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.alpha -= 0.02;
+      }
+      draw() {
+        ctx.globalAlpha = this.alpha;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
     }
 
-    const createRocket = () => {
-      if (rockets.current.length < intensity * 5) rockets.current.push(new Rocket());
-    };
-
-    const update = () => {
+    const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      rockets.current.forEach((r, i) => {
-        r.x += r.vx;
-        r.y += r.vy;
-        r.vy += 0.2;
+      // Spawn fireworks randomly
+      if (Math.random() < 0.03) fireworks.push(new Firework());
 
-        ctx.fillStyle = "#38bdf8";
-        ctx.fillRect(r.x, r.y, 2, 4);
+      // Update fireworks
+      for (let i = fireworks.length - 1; i >= 0; i--) {
+        const f = fireworks[i];
+        if (!f.exploded) f.explode();
+        else fireworks.splice(i, 1);
+      }
 
-        if (r.vy >= 0 && !r.exploded) {
-          r.exploded = true;
-          for (let j = 0; j < particleCount; j++) {
-            particles.current.push(new Particle(r.x, r.y));
-          }
-          rockets.current.splice(i, 1);
-        }
-      });
+      // Update particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.update();
+        p.draw();
+        if (p.alpha <= 0) particles.splice(i, 1);
+      }
 
-      particles.current = particles.current.filter((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.05;
-        p.alpha -= 0.02;
-        ctx.fillStyle = `rgba(99,102,241,${p.alpha})`;
-        ctx.fillRect(p.x, p.y, 2, 2);
-        return p.alpha > 0;
-      });
-
-      requestAnimationFrame(update);
+      requestAnimationFrame(animate);
     };
 
-    update();
-    const interval = setInterval(createRocket, 400);
+    animate();
 
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener("resize", setSize);
-    };
-  }, [intensity, particleCount]);
+    return () => window.removeEventListener("resize", setCanvasSize);
+  }, []);
 
-  return <canvas ref={canvasRef} className={`pointer-events-none ${className}`} />;
+  return <canvas ref={canvasRef} className="w-full h-full pointer-events-none" />;
 }
