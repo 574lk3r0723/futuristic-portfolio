@@ -1,9 +1,10 @@
-/* PortfolioApp.jsx */
+/* PortfolioApp.jsx - Main React App */
 import React from "react";
 import { motion } from "framer-motion";
 import { Mail, Github, Linkedin, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
-import Fireworks from "./fireworks";
+import Fireworks from "./fireworks"; // Keep your existing fireworks
+import TypingAnimation from "./TypingAnimation"; // Make sure you have your typing animation component
 
 const projects = [
   { id: 1, title: "AI DevOps Dashboard", desc: "Realtime insights, anomaly detection and auto-remediation pipelines.", tags: ["React", "Node", "Kubernetes"], link: "#" },
@@ -11,38 +12,6 @@ const projects = [
   { id: 3, title: "Crossword Puzzle Engine", desc: "Procedural level generator, beautiful front-end and leaderboards.", tags: ["TypeScript", "React", "Redis"], link: "#" },
   { id: 4, title: "Portfolio Builder AI", desc: "An AI-powered web portfolio generator that writes your bio for you.", tags: ["Next.js", "OpenAI", "Tailwind"], link: "#" },
 ];
-
-function TypingAnimation() {
-  const phrases = ["Full-stack Engineer", "Performance-focused", "Pixel-perfect UI"];
-  const [idx, setIdx] = React.useState(0);
-  const [subIdx, setSubIdx] = React.useState(0);
-  const [forward, setForward] = React.useState(true);
-
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (forward) {
-        if (subIdx < phrases[idx].length) setSubIdx((s) => s + 1);
-        else setForward(false);
-      } else {
-        if (subIdx > 0) setSubIdx((s) => s - 1);
-        else {
-          setForward(true);
-          setIdx((i) => (i + 1) % phrases.length);
-        }
-      }
-    }, forward ? 80 : 40);
-    return () => clearTimeout(timeout);
-  }, [idx, subIdx, forward, phrases]);
-
-  return (
-    <div className="text-sm text-slate-400 mb-2">
-      <span className="inline-block rounded px-3 py-1 bg-slate-800/40 backdrop-blur-sm">
-        {phrases[idx].slice(0, subIdx)}
-        <span className="ml-1 inline-block w-1 h-4 align-middle bg-slate-400 animate-pulse" />
-      </span>
-    </div>
-  );
-}
 
 export default function PortfolioApp() {
   const [form, setForm] = React.useState({ name: "", email: "", message: "" });
@@ -74,22 +43,12 @@ export default function PortfolioApp() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#071033] to-[#001219] text-slate-100 antialiased overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <motion.div
-          className="absolute -top-40 left-1/2 w-[1200px] h-[1200px] rounded-full blur-3xl opacity-30"
-          style={{ background: "linear-gradient(135deg, rgba(99,102,241,0.45), rgba(56,189,248,0.35))", transform: "translateX(-50%)" }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-        />
-      </div>
-
+    <div className="min-h-screen bg-[#0f172a] text-slate-100 antialiased overflow-hidden">
       {/* Header */}
-      <header className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between relative z-20">
+      <header className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-cyan-400 rounded-2xl flex items-center justify-center text-black font-bold">TS</div>
-          <div className="font-medium">Your Name</div>
+          <div className="font-medium">Ryan</div>
         </div>
         <nav className="space-x-4 hidden md:flex">
           <a href="#projects" className="hover:underline">Projects</a>
@@ -99,7 +58,7 @@ export default function PortfolioApp() {
         </nav>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 pb-16 relative z-10">
+      <main className="max-w-6xl mx-auto px-6 py-12">
         {/* Hero Section */}
         <section className="grid md:grid-cols-2 gap-8 items-center relative">
           {/* Left Column */}
@@ -110,11 +69,7 @@ export default function PortfolioApp() {
               transition={{ delay: 0.1 }}
               className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight"
             >
-              Building{" "}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-200 to-purple-300">
-                futuristic
-              </span>{" "}
-              web experiences —<br /> that recruiters remember.
+              Building <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-200 to-purple-300">futuristic</span> web experiences —<br /> that recruiters remember.
             </motion.h1>
 
             <motion.p
@@ -123,53 +78,36 @@ export default function PortfolioApp() {
               transition={{ delay: 0.25 }}
               className="mt-6 text-slate-300 max-w-xl"
             >
-              I'm a full-stack engineer who blends performant architecture with pixel-perfect UI.
-              I focus on shipping results that scale, impress, and solve business problems.
+              I'm a full-stack engineer who blends performant architecture with pixel-perfect UI. I focus on shipping results that scale, impress, and solve business problems.
             </motion.p>
 
             <div className="mt-8 flex flex-wrap gap-4">
-              <a
-                href="#projects"
-                className="inline-flex items-center gap-3 px-5 py-3 rounded-full bg-gradient-to-r from-purple-500 to-cyan-400 font-semibold shadow-lg hover:scale-105 transform transition"
-              >
-                See Projects
-              </a>
-              <a
-                href="#contact"
-                className="inline-flex items-center gap-2 px-4 py-3 rounded-lg border border-slate-700"
-              >
-                <Mail size={16} /> Contact
-              </a>
+              <a href="#projects" className="inline-flex items-center gap-3 px-5 py-3 rounded-full bg-gradient-to-r from-purple-500 to-cyan-400 font-semibold shadow-lg hover:scale-105 transform transition">See Projects</a>
+              <a href="#contact" className="inline-flex items-center gap-2 px-4 py-3 rounded-lg border border-slate-700"><Mail size={16} /> Contact</a>
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-slate-400">
-              <a href="#" className="flex items-center gap-2 hover:underline">
-                <Github size={16} /> github.com/you
-              </a>
-              <a href="#" className="flex items-center gap-2 hover:underline">
-                <Linkedin size={16} /> linkedin.com/in/you
-              </a>
+              <a href="#" className="flex items-center gap-2 hover:underline"><Github size={16} /> github.com/you</a>
+              <a href="#" className="flex items-center gap-2 hover:underline"><Linkedin size={16} /> linkedin.com/in/you</a>
             </div>
           </div>
 
-          {/* Right Column: Photo with fireworks */}
-          <div className="relative flex flex-col justify-center items-center md:items-end mt-6 md:mt-0 w-full h-full">
-            {/* Fireworks canvas behind the image */}
-            <div className="absolute -top-28 -right-28 w-[500px] h-[500px] md:w-[600px] md:h-[600px] pointer-events-none">
-              <Fireworks intensity={0.8} particleCount={50} className="w-full h-full" />
-            </div>
+          {/* Right Column: Fireworks + Typing + Photo */}
+          <div className="flex flex-col justify-center items-center md:items-end mt-6 md:mt-0 relative">
+            {/* Fireworks */}
+            <Fireworks />
 
-            {/* Typing animation above image */}
+            {/* Typing Animation */}
             <TypingAnimation />
 
-            {/* Profile image in front */}
+            {/* Profile Photo */}
             <motion.img
               src="/me.jpg"
               alt="Ryan"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 rounded-2xl object-cover shadow-xl border-4 border-slate-700 relative z-10"
+              className="w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 rounded-2xl object-cover shadow-xl border-4 border-slate-700 mt-4"
             />
           </div>
         </section>
@@ -183,7 +121,7 @@ export default function PortfolioApp() {
               <h3 className="text-xl font-semibold mb-3">{projects[current].title}</h3>
               <p className="text-slate-300 mb-4">{projects[current].desc}</p>
               <div className="flex justify-center gap-2 mb-4">
-                {projects[current].tags.map((tag) => (
+                {projects[current].tags.map(tag => (
                   <span key={tag} className="px-2 py-1 rounded-md border border-slate-700 text-xs text-slate-400">{tag}</span>
                 ))}
               </div>
@@ -233,7 +171,7 @@ export default function PortfolioApp() {
         </section>
 
         {/* Footer */}
-        <footer className="mt-16 text-center text-slate-500">© {new Date().getFullYear()} Your Name — Built with React + Tailwind + Framer Motion</footer>
+        <footer className="mt-16 text-center text-slate-500">© {new Date().getFullYear()} Ryan — Built with React + Tailwind + Framer Motion</footer>
       </main>
     </div>
   );
