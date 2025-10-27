@@ -3,7 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Mail, Github, Linkedin, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
-import Fireworks from "fireworks"; // Import Fireworks
+import Fireworks from "./fireworks"; // Import Fireworks
 
 const projects = [
   { id: 1, title: "AI DevOps Dashboard", desc: "Realtime insights, anomaly detection and auto-remediation pipelines.", tags: ["React", "Node", "Kubernetes"], link: "#" },
