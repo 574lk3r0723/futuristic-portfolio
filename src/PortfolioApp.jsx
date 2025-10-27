@@ -3,7 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Mail, Github, Linkedin, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
-import Fireworks from "./fireworks"; // Import Fireworks
+import Fireworks from "./fireworks";
 
 const projects = [
   { id: 1, title: "AI DevOps Dashboard", desc: "Realtime insights, anomaly detection and auto-remediation pipelines.", tags: ["React", "Node", "Kubernetes"], link: "#" },
@@ -12,7 +12,6 @@ const projects = [
   { id: 4, title: "Portfolio Builder AI", desc: "An AI-powered web portfolio generator that writes your bio for you.", tags: ["Next.js", "OpenAI", "Tailwind"], link: "#" },
 ];
 
-/* TypingAnimation component */
 function TypingAnimation() {
   const phrases = ["Full-stack Engineer", "Performance-focused", "Pixel-perfect UI"];
   const [idx, setIdx] = React.useState(0);
@@ -22,15 +21,11 @@ function TypingAnimation() {
   React.useEffect(() => {
     const timeout = setTimeout(() => {
       if (forward) {
-        if (subIdx < phrases[idx].length) {
-          setSubIdx((s) => s + 1);
-        } else {
-          setForward(false);
-        }
+        if (subIdx < phrases[idx].length) setSubIdx((s) => s + 1);
+        else setForward(false);
       } else {
-        if (subIdx > 0) {
-          setSubIdx((s) => s - 1);
-        } else {
+        if (subIdx > 0) setSubIdx((s) => s - 1);
+        else {
           setForward(true);
           setIdx((i) => (i + 1) % phrases.length);
         }
@@ -61,11 +56,9 @@ export default function PortfolioApp() {
 
   React.useEffect(() => {
     if (paused) return;
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % projects.length);
-    }, 5000);
+    const timer = setInterval(nextSlide, 5000);
     return () => clearInterval(timer);
-  }, [paused, projects.length]);
+  }, [paused]);
 
   const submitContact = async (e) => {
     e.preventDefault();
@@ -160,10 +153,10 @@ export default function PortfolioApp() {
           </div>
 
           {/* Right Column: Photo with fireworks */}
-          <div className="flex flex-col justify-center items-center md:items-end mt-6 md:mt-0 relative w-full h-full">
-            {/* Fireworks canvas behind the image */}
-            <div className="absolute top-0 right-0 w-64 h-72 md:w-72 md:h-72">
-              <Fireworks intensity={0.8} particleCount={30} />
+          <div className="relative flex flex-col justify-center items-center md:items-end mt-6 md:mt-0 w-full h-full">
+            {/* Fireworks canvas bigger than image */}
+            <div className="absolute -top-20 -right-20 w-[400px] h-[400px] md:w-[500px] md:h-[500px]">
+              <Fireworks intensity={0.8} particleCount={40} className="w-full h-full" />
             </div>
 
             <TypingAnimation />
@@ -174,7 +167,7 @@ export default function PortfolioApp() {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 rounded-2xl object-cover shadow-xl border-4 border-slate-700 mt-4 relative z-10"
+              className="w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 rounded-2xl object-cover shadow-xl border-4 border-slate-700 relative z-10"
             />
           </div>
         </section>
