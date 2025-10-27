@@ -100,7 +100,7 @@ export default function PortfolioApp() {
           {/* Right Column: Responsive Photo */}
           <div className="flex justify-center md:justify-end mt-6 md:mt-0">
             <motion.img
-              src="public\me.jpg"
+              src="/me.jpg"
               alt="Your Name"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
