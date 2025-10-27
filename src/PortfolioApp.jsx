@@ -3,6 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Mail, Github, Linkedin, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
+import Fireworks from "fireworks"; // Import Fireworks
 
 const projects = [
   { id: 1, title: "AI DevOps Dashboard", desc: "Realtime insights, anomaly detection and auto-remediation pipelines.", tags: ["React", "Node", "Kubernetes"], link: "#" },
@@ -11,7 +12,7 @@ const projects = [
   { id: 4, title: "Portfolio Builder AI", desc: "An AI-powered web portfolio generator that writes your bio for you.", tags: ["Next.js", "OpenAI", "Tailwind"], link: "#" },
 ];
 
-/* Simple TypingAnimation component (was referenced but not defined) */
+/* TypingAnimation component */
 function TypingAnimation() {
   const phrases = ["Full-stack Engineer", "Performance-focused", "Pixel-perfect UI"];
   const [idx, setIdx] = React.useState(0);
@@ -25,7 +26,6 @@ function TypingAnimation() {
           setSubIdx((s) => s + 1);
         } else {
           setForward(false);
-          setTimeout(() => setForward(false), 600);
         }
       } else {
         if (subIdx > 0) {
@@ -56,12 +56,9 @@ export default function PortfolioApp() {
   const [paused, setPaused] = React.useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-  const nextSlide = React.useCallback(() => {
-    setCurrent((prev) => (prev + 1) % projects.length);
-  }, []);
+  const nextSlide = () => setCurrent((prev) => (prev + 1) % projects.length);
   const prevSlide = () => setCurrent((prev) => (prev - 1 + projects.length) % projects.length);
 
-  /* Improved effect: avoid stale closure by using setCurrent directly */
   React.useEffect(() => {
     if (paused) return;
     const timer = setInterval(() => {
@@ -109,12 +106,10 @@ export default function PortfolioApp() {
         </nav>
       </header>
 
-      {/* MAIN: added opening main tag (was missing) */}
       <main className="max-w-6xl mx-auto px-6 pb-16">
-
         {/* Hero Section */}
         <section className="grid md:grid-cols-2 gap-8 items-center relative">
-          {/* Left Column: Text, buttons, links */}
+          {/* Left Column */}
           <div>
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
@@ -164,9 +159,13 @@ export default function PortfolioApp() {
             </div>
           </div>
 
-          {/* Right Column: Photo with typing animation */}
-          <div className="flex flex-col justify-center items-center md:items-end mt-6 md:mt-0 relative">
-            {/* Typing animation above image */}
+          {/* Right Column: Photo with fireworks */}
+          <div className="flex flex-col justify-center items-center md:items-end mt-6 md:mt-0 relative w-full h-full">
+            {/* Fireworks canvas behind the image */}
+            <div className="absolute top-0 right-0 w-64 h-72 md:w-72 md:h-72">
+              <Fireworks intensity={0.8} particleCount={30} />
+            </div>
+
             <TypingAnimation />
 
             <motion.img
@@ -175,7 +174,7 @@ export default function PortfolioApp() {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 rounded-2xl object-cover shadow-xl border-4 border-slate-700 mt-4"
+              className="w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 rounded-2xl object-cover shadow-xl border-4 border-slate-700 mt-4 relative z-10"
             />
           </div>
         </section>
